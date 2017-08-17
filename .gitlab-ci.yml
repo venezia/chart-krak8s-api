@@ -1,7 +1,6 @@
 image: quay.io/samsung_cnct/helm-registry-agent
 
 variables:
-  CHART_VER: ${CI_COMMIT_REF_NAME}
   CHART_REL: ${CI_COMMIT_SHA}
   CHART_NAME: krak8s-api
 
@@ -11,7 +10,8 @@ build-branch:
     - branches
     - master
   script:
-  - envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
+  - CHART_VER=${CI_COMMIT_REF_NAME} envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
+  - cat krak8s-api/Chart.yaml
 
 build-tags:
   stage: test
@@ -19,6 +19,7 @@ build-tags:
     - tags
   script:
   - CHART_VER=${CI_COMMIT_TAG} envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
+  - cat krak8s-api/Chart.yaml
 
 test:
   stage: test
