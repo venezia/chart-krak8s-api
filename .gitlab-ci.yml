@@ -27,7 +27,7 @@ build-tags:
 test:
   stage: test
   variables:
-    GIT_CHECKOUT: false
+    GIT_STRATEGY: fetch
   script:
   - helm lint ${CHART_NAME}
 
@@ -37,7 +37,7 @@ deploy-branches:
     - branches
     - master
   variables:
-    GIT_CHECKOUT: false
+    GIT_STRATEGY: fetch
   script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
   - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c alpha ${CHART_NAME}
@@ -47,7 +47,7 @@ deploy-tags:
   only:
     - tags
   variables:
-    GIT_CHECKOUT: false
+    GIT_STRATEGY: fetch
   script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
   - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable ${CHART_NAME}
