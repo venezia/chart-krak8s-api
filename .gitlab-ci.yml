@@ -26,8 +26,8 @@ build-tags:
 
 test:
   stage: test
-  variables:
-    GIT_STRATEGY: fetch
+  cache:
+    policy: pull
   script:
   - helm lint ${CHART_NAME}
 
@@ -36,8 +36,8 @@ deploy-branches:
   only:
     - branches
     - master
-  variables:
-    GIT_STRATEGY: fetch
+  cache:
+    policy: pull
   script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
   - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c alpha ${CHART_NAME}
@@ -46,8 +46,8 @@ deploy-tags:
   stage: deploy
   only:
     - tags
-  variables:
-    GIT_STRATEGY: fetch
+  cache:
+    policy: pull
   script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
   - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable ${CHART_NAME}
