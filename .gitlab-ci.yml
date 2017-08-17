@@ -4,11 +4,6 @@ variables:
   CHART_REL: ${CI_COMMIT_SHA}
   CHART_NAME: krak8s-api
 
-cache:
-  untracked: true
-  paths: 
-    - krak8s-api/
-
 build-branch:
   stage: build
   only:
@@ -28,11 +23,15 @@ build-tags:
 
 test:
   stage: test
+  variables:
+    GIT_STRATEGY: none
   script:
   - helm lint ${CHART_NAME}
 
 deploy:
   stage: deploy
+  variables:
+    GIT_STRATEGY: none
   script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
   - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable ${CHART_NAME}
