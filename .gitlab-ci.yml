@@ -6,7 +6,8 @@ variables:
 
 cache:
   untracked: true
-  paths: krak8s-api/
+  paths: 
+    - krak8s-api/
 
 build-branch:
   stage: build
