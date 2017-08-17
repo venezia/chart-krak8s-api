@@ -5,9 +5,9 @@ variables:
   CHART_REL: ${CI_COMMIT_SHA}
   CHART_NAME: krak8s-api
 
-build-no-tag:
-  stage: test-no-tag
-  except: tags
+build-branch:
+  stage: test-branch
+  only: branches
   script:
   - envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
   - helm lint ${CHART_NAME}
@@ -20,7 +20,6 @@ build:
   - helm lint ${CHART_NAME}
 
 deploy:
-  only: tags
   stage: deploy
   script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
