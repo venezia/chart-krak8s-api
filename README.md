@@ -1,2 +1,2 @@
 # chart-krak8s-api
-krak8s api helm chart
+Krak8s API helm chart

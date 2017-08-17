@@ -1,0 +1,63 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}-krak8s"
+  labels:
+    app: "{{ .Release.Name }}-krak8s"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{.Values.replicas}}
+  template:
+    metadata:
+      labels:
+        app: "{{ .Release.Name }}-krak8s"
+    spec:
+      {{- if .Values.scheduling.affinity }}
+      {{- if .Values.scheduling.affinity.node }}
+      {{- if .Values.scheduling.affinity.node.labels }}
+      affinity:
+        nodeAffinity:
+          {{ .Values.scheduling.affinity.node.type }}:
+            nodeSelectorTerms:
+            - matchExpressions:
+                {{- range .Values.scheduling.affinity.node.labels }}
+                - key: {{ .key }}
+                  operator: {{ .operator }}
+                  values:
+                  {{- range .values }}
+                  - {{ . }}
+                  {{- end }}
+                {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      containers:
+      - name: "{{ .Release.Name }}-krak8s"
+        image: {{ .Values.image }}:{{ .Values.imageTag }}
+        imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+        ports:
+        - name: api
+          containerPort: 8080
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu | quote }}
+            memory: {{ .Values.resources.requests.memory | quote }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu | quote }}
+            memory: {{ .Values.resources.requests.memory | quote }}
+      {{- if .Values.imagePullSecret }}
+      imagePullSecrets:
+        - name: "{{ .Release.Name }}-pull-secret"
+      {{- end }}
+      serviceAccountName: "{{ .Release.Name }}-krak8s-serviceaccount"
+      {{- if .Values.scheduling.tolerations }}
+      tolerations:
+      {{- range .Values.scheduling.tolerations }}
+      - key: {{ .key }}
+        value: {{ .value }}
+        operator: Equal
+        effect: {{ .effect }}
+      {{- end }}
+      {{- end }}
