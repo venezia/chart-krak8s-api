@@ -4,6 +4,9 @@ variables:
   CHART_REL: ${CI_COMMIT_SHA}
   CHART_NAME: krak8s-api
 
+cache:
+  untracked: true
+
 build-branch:
   stage: build
   only:
