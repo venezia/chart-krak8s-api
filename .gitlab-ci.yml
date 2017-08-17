@@ -4,9 +4,6 @@ variables:
   CHART_REL: ${CI_COMMIT_SHA}
   CHART_NAME: krak8s-api
 
-cache:
-  untracked: true
-
 build-branch:
   stage: build
   only:
@@ -15,6 +12,9 @@ build-branch:
   script:
   - CHART_VER=${CI_COMMIT_REF_NAME} envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
   - cat krak8s-api/Chart.yaml
+  - helm lint ${CHART_NAME}
+  - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
+  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c alpha ${CHART_NAME}
 
 build-tags:
   stage: test
@@ -23,32 +23,7 @@ build-tags:
   script:
   - CHART_VER=${CI_COMMIT_TAG} envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
   - cat krak8s-api/Chart.yaml
-
-test:
-  stage: test
-  cache:
-    policy: pull
-  script:
   - helm lint ${CHART_NAME}
-
-deploy-branches:
-  stage: deploy
-  only:
-    - branches
-    - master
-  cache:
-    policy: pull
-  script:
-  - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
-  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c alpha ${CHART_NAME}
-
-deploy-tags:
-  stage: deploy
-  only:
-    - tags
-  cache:
-    policy: pull
-  script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
   - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable ${CHART_NAME}
 
