@@ -5,13 +5,14 @@ variables:
   CHART_REL: ${CI_COMMIT_SHA}
   CHART_NAME: krak8s-api
 
-build:
+build-no-tag:
   stage: test-no-tag
   except: tags
   script:
   - envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
   - helm lint ${CHART_NAME}
 
+build:
   stage: test
   only: tags
   script:
