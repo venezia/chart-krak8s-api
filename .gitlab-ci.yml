@@ -14,7 +14,8 @@ build-branch:
   - cat krak8s-api/Chart.yaml
   - helm lint ${CHART_NAME}
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
-  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c alpha ${CHART_NAME}
+  - cd ${CHART_NAME}
+  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c alpha
 
 build-tags:
   stage: test
@@ -25,5 +26,6 @@ build-tags:
   - cat krak8s-api/Chart.yaml
   - helm lint ${CHART_NAME}
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
-  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable ${CHART_NAME}
+  - cd ${CHART_NAME}
+  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable
 
