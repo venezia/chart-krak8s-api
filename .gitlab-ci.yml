@@ -1,28 +1,31 @@
 image: quay.io/samsung_cnct/helm-registry-agent
 
 variables:
-  CHART_VER: ${CI_COMMIT_REF_NAME}
   CHART_REL: ${CI_COMMIT_SHA}
   CHART_NAME: krak8s-api
 
-build:
-  stage: test-no-tag
-  except: tags
+build-branch:
+  stage: build
+  only:
+    - branches
+    - master
   script:
-  - envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
+  - CHART_VER=0.0.1-${CI_COMMIT_REF_NAME} envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
+  - cat krak8s-api/Chart.yaml
   - helm lint ${CHART_NAME}
-
-  stage: test
-  only: tags
-  script:
-  - CHART_VER=${CI_COMMIT_TAG} envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
-  - helm lint ${CHART_NAME}
-
-deploy:
-  only: tags
-  stage: deploy
-  script:
   - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
-  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable ${CHART_NAME}
+  - cd ${CHART_NAME}
+  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c alpha
 
+build-tags:
+  stage: test
+  only:
+    - tags
+  script:
+  - CHART_VER=${CI_COMMIT_TAG} CHART_REL=0 envsubst < build/Chart.yaml.in > ${CHART_NAME}/Chart.yaml
+  - cat krak8s-api/Chart.yaml
+  - helm lint ${CHART_NAME}
+  - helm registry login -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD} ${REGISTRY_HOST}
+  - cd ${CHART_NAME}
+  - helm registry push ${REGISTRY_HOST}/${REGISTRY_CHART_NAME} -c stable
 
