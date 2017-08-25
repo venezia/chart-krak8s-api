@@ -20,7 +20,7 @@ krak8s:
 
 gitArchivist:
   image: quay.io/samsung_cnct/git-archivist
-  tag: latest
+  imageTag: latest
   imagePullPolicy: IfNotPresent
   imagePullSecret:
 
