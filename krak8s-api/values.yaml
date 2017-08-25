@@ -1,26 +1,44 @@
 ## Launchdock Image and Image Tag
 ## ref: https://hub.docker.com/r/reactioncommerce/launchdock/tags/
 ##
-image: quay.io/reactioncommerce/krak8s
-imageTag: latest
-imagePullPolicy: IfNotPresent
-imagePullSecret: 
+krak8s:
+  image: quay.io/reactioncommerce/krak8s
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  imagePullSecret:
+
+  ## Configure resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 768Mi
+    requests:
+      cpu: 200m
+      memory: 768Mi
+
+gitArchivist:
+  image: quay.io/samsung_cnct/git-archivist
+  tag: latest
+  imagePullPolicy: IfNotPresent
+  imagePullSecret:
+
+  ## Configure resource requests and limits
+  ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
 
 ## Should the service be LoadBalancer, NodePort or ClusterIP
 ## If you're using ingress, ClusterIP should be a solid choice
 ##
 serviceType: ClusterIP
-
-## Configure resource requests and limits
-## ref: http://kubernetes.io/docs/user-guide/compute-resources/
-##
-resources:
-  limits:
-    cpu: 500m
-    memory: 768Mi
-  requests:
-    cpu: 500m
-    memory: 768Mi
 
 scheduling:
   affinity:

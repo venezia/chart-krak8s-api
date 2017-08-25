@@ -34,22 +34,42 @@ spec:
       {{- end }}
       {{- end }}
       containers:
-      - name: "{{ .Release.Name }}-krak8s"
-        image: {{ .Values.image }}:{{ .Values.imageTag }}
-        imagePullPolicy: {{ default "" .Values.imagePullPolicy | quote }}
+      - name: krak8s
+        image: {{ .Values.krak8s.image }}:{{ .Values.krak8s.imageTag }}
+        imagePullPolicy: {{ default "" .Values.krak8s.imagePullPolicy | quote }}
         ports:
         - name: api
           containerPort: 8080
         resources:
           requests:
-            cpu: {{ .Values.resources.requests.cpu | quote }}
-            memory: {{ .Values.resources.requests.memory | quote }}
+            cpu: {{ .Values.krak8s.resources.requests.cpu | quote }}
+            memory: {{ .Values.krak8s.resources.requests.memory | quote }}
           limits:
-            cpu: {{ .Values.resources.limits.cpu | quote }}
-            memory: {{ .Values.resources.requests.memory | quote }}
-      {{- if .Values.imagePullSecret }}
+            cpu: {{ .Values.krak8s.resources.limits.cpu | quote }}
+            memory: {{ .Values.krak8s.resources.requests.memory | quote }}
+        volumeMounts:
+        - name: kraken-directory
+          mountPath: /.kraken/
+      - name: git-archivist
+        image: {{ .Values.gitArchivist.image }}:{{ .Values.gitArchivist.imageTag }}
+        imagePullPolicy: {{ default "" .Values.gitArchivist.imagePullPolicy | quote }}
+        args: ["--v=2", "--logtostderr=true"]
+        resources:
+          requests:
+            cpu: {{ .Values.gitArchivist.resources.requests.cpu | quote }}
+            memory: {{ .Values.gitArchivist.resources.requests.memory | quote }}
+          limits:
+            cpu: {{ .Values.gitArchivist.resources.limits.cpu | quote }}
+            memory: {{ .Values.gitArchivist.resources.requests.memory | quote }}
+        volumeMounts:
+        - name: kraken-directory
+          mountPath: /.kraken/
       imagePullSecrets:
+      {{- if .Values.krak8s.imagePullSecret }}
         - name: "{{ .Release.Name }}-pull-secret"
+      {{- end }}
+      {{- if .Values.gitArchivist.imagePullSecret }}
+        - name: "{{ .Release.Name }}-gitarchivist-pull-secret"
       {{- end }}
       serviceAccountName: "{{ .Release.Name }}-krak8s-serviceaccount"
       {{- if .Values.scheduling.tolerations }}
@@ -61,3 +81,7 @@ spec:
         effect: {{ .effect }}
       {{- end }}
       {{- end }}
+      volumes:
+      - name: kraken-directory
+        emptyDir: {}
+
