@@ -1,0 +1,15 @@
+name: krak8s-api
+version: 0.0.1
+description: Krak8s API
+keywords:
+- reactioncommerce
+- kraken
+home: https://reactioncommerce.com/
+sources:
+- https://github.com/reactioncommerce/krak8s
+- https://github.com/reactioncommerce/chart-krak8s-api
+icon: https://avatars1.githubusercontent.com/u/5605462?v=4&s=200
+maintainers:
+- name: Michael Venezia
+  email: mvenezia@gmail.com
+
