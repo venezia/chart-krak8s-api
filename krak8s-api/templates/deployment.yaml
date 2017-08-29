@@ -37,6 +37,23 @@ spec:
       - name: krak8s
         image: {{ .Values.krak8s.image }}:{{ .Values.krak8s.imageTag }}
         imagePullPolicy: {{ default "" .Values.krak8s.imagePullPolicy | quote }}
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-aws-secret"
+                key: id 
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-aws-secret"
+                key: key
+          - name: AWS_DEFAULT_REGION
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-aws-secret"
+                key: region
+        
         ports:
         - name: api
           containerPort: 8080

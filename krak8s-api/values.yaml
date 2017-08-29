@@ -6,6 +6,12 @@ krak8s:
   imageTag: latest
   imagePullPolicy: IfNotPresent
   imagePullSecret:
+  cloudProvider: none
+  awsCredentials:
+    # Each of the following values must be base64 encoded
+    id:
+    key:
+    region:
 
   ## Configure resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
