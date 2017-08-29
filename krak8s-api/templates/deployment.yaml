@@ -37,8 +37,7 @@ spec:
       - name: krak8s
         image: {{ .Values.krak8s.image }}:{{ .Values.krak8s.imageTag }}
         imagePullPolicy: {{ default "" .Values.krak8s.imagePullPolicy | quote }}
-{{- if .Values.cloudProvider }}
-{{- if eq .Values.cloudProvider "aws" }}
+{{- if eq .Values.krak8s.cloudProvider "aws" }}
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
@@ -55,7 +54,6 @@ spec:
               secretKeyRef:
                 name: "{{ .Release.Name }}-aws-secret"
                 key: region
-{{- end }}
 {{- end }}
         ports:
         - name: api
