@@ -72,6 +72,21 @@ spec:
         image: {{ .Values.gitArchivist.image }}:{{ .Values.gitArchivist.imageTag }}
         imagePullPolicy: {{ default "" .Values.gitArchivist.imagePullPolicy | quote }}
         args: ["--v=2", "--logtostderr=true"]
+        env:
+        {{- if .Values.gitArchivist.git.username }}
+          - name: GA_ACCOUNT
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: username
+        {{- end }}
+        {{- if .Values.gitArchivist.git.password }}
+          - name: GA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: password
+        {{- end }}
         resources:
           requests:
             cpu: {{ .Values.gitArchivist.resources.requests.cpu | quote }}
