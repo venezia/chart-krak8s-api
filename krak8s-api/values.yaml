@@ -32,6 +32,10 @@ gitArchivist:
   imagePullPolicy: IfNotPresent
   imagePullSecret:
 
+  git:
+    username:
+    password:
+
   ## Configure resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
