@@ -10,7 +10,7 @@ krak8s:
   # (currently only supports "aws")
   cloudProvider: none
   awsCredentials:
-    # Each of the following values must be base64 encoded
+    # The result will be base64 encoded for you, just use normal values
     id:
     key:
     region:
@@ -33,6 +33,11 @@ gitArchivist:
   imagePullSecret:
 
   git:
+    # All are required
+    account:
+    email:
+    repository:
+    server: github.com
     username:
     password:
 
