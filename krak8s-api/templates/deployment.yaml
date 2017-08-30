@@ -71,10 +71,38 @@ spec:
       - name: git-archivist
         image: {{ .Values.gitArchivist.image }}:{{ .Values.gitArchivist.imageTag }}
         imagePullPolicy: {{ default "" .Values.gitArchivist.imagePullPolicy | quote }}
-        args: ["--v=2", "--logtostderr=true"]
+        args: ["--v=4", "--logtostderr=true", "--directory /.kraken/"]
         env:
-        {{- if .Values.gitArchivist.git.username }}
+        {{- if .Values.gitArchivist.git.account }}
           - name: GA_ACCOUNT
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: account
+        {{- end }}
+        {{- if .Values.gitArchivist.git.email }}
+          - name: GA_EMAIL
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: email
+        {{- end }}
+        {{- if .Values.gitArchivist.git.repository }}
+          - name: GA_REPOSITORY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: repository
+        {{- end }}
+        {{- if .Values.gitArchivist.git.server }}
+          - name: GA_SERVER
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: server
+        {{- end }}
+        {{- if .Values.gitArchivist.git.username }}
+          - name: GA_USERNAME
             valueFrom:
               secretKeyRef:
                 name: "{{ .Release.Name }}-git-secret"
