@@ -71,7 +71,7 @@ spec:
       - name: git-archivist
         image: {{ .Values.gitArchivist.image }}:{{ .Values.gitArchivist.imageTag }}
         imagePullPolicy: {{ default "" .Values.gitArchivist.imagePullPolicy | quote }}
-        args: ["--v=4", "--logtostderr=true", "--directory /.kraken/"]
+        args: ["--v=4", "--logtostderr=true", "--directory=/.kraken/"]
         env:
         {{- if .Values.gitArchivist.git.account }}
           - name: GA_ACCOUNT
