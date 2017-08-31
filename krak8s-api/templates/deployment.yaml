@@ -71,7 +71,7 @@ spec:
       - name: git-archivist
         image: {{ .Values.gitArchivist.image }}:{{ .Values.gitArchivist.imageTag }}
         imagePullPolicy: {{ default "" .Values.gitArchivist.imagePullPolicy | quote }}
-        args: ["--v=4", "--logtostderr=true", "--directory=/.kraken/"]
+        args: ["--v=4", "--logtostderr=true", "--directory=/.kraken/", "--initial-clone=false"]
         env:
         {{- if .Values.gitArchivist.git.account }}
           - name: GA_ACCOUNT
@@ -125,6 +125,57 @@ spec:
         volumeMounts:
         - name: kraken-directory
           mountPath: /.kraken/
+      initContainers:
+      - name: git-archivist-init
+        image: {{ .Values.gitArchivist.image }}:{{ .Values.gitArchivist.imageTag }}
+        imagePullPolicy: {{ default "" .Values.gitArchivist.imagePullPolicy | quote }}
+        args: ["--v=4", "--logtostderr=true", "--directory=/.kraken/", "--init-only=true"]
+        env:
+        {{- if .Values.gitArchivist.git.account }}
+          - name: GA_ACCOUNT
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: account
+        {{- end }}
+        {{- if .Values.gitArchivist.git.email }}
+          - name: GA_EMAIL
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: email
+        {{- end }}
+        {{- if .Values.gitArchivist.git.repository }}
+          - name: GA_REPOSITORY
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: repository
+        {{- end }}
+        {{- if .Values.gitArchivist.git.server }}
+          - name: GA_SERVER
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: server
+        {{- end }}
+        {{- if .Values.gitArchivist.git.username }}
+          - name: GA_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: username
+        {{- end }}
+        {{- if .Values.gitArchivist.git.password }}
+          - name: GA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: "{{ .Release.Name }}-git-secret"
+                key: password
+        {{- end }}
+        volumeMounts:
+        - name: kraken-directory
+          mountPath: /.kraken/
       imagePullSecrets:
       {{- if .Values.krak8s.imagePullSecret }}
         - name: "{{ .Release.Name }}-pull-secret"
@@ -145,4 +196,3 @@ spec:
       volumes:
       - name: kraken-directory
         emptyDir: {}
-
